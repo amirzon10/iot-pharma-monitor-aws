@@ -10,7 +10,7 @@ Monitoring Objectives:
 
 2. High-Level Architecture
 
-![Alt text](Images/IOT system flow.png)
+![IoT System Flow](Images/IOT%20system%20flow.png)
 
 The system architecture is based on the use of decoupled, cloud-native design that guarantees high availability and data persistence.
 There are software components that the computer recognizes.<|human|>Software Component Identification:
