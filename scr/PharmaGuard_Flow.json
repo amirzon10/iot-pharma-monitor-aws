@@ -1,0 +1,109 @@
+[
+    {
+        "id": "68ebf9db6eb0dc1b",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "fb9e99ae90d596fa",
+        "type": "aws-iot-out",
+        "z": "68ebf9db6eb0dc1b",
+        "name": "Publish to AWS Cloud",
+        "topic": "sensehat/data",
+        "qos": "1",
+        "broker": "6bb677f9448d32b9",
+        "x": 840,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "7aede8794dfe89bd",
+        "type": "function",
+        "z": "68ebf9db6eb0dc1b",
+        "name": "H1 Payload Formatter",
+        "func": "// Get raw data from Sense HAT\nvar temp = msg.payload.temperature;\nvar hum = msg.payload.humidity;\nvar pre = msg.payload.pressure\n// Create H1 standard payload\nmsg.payload = {\n    \"device_id\": \"WS-001\",\n    \"timestamp\": Date.now(),\n    \"sensors\": {\n        \"temperature\": parseFloat(temp.toFixed(2)),\n        \"humidity\": parseFloat(hum.toFixed(2)),\n        \"pressure\": parseFloat(pre.toFixed(2))\n    },\n    \"metadata\": {\n        \"lat\": 53.3498, // Dublin coordinates\n        \"long\": -6.2603,\n        \"location\": \"Dublin Lab A\"\n    }\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 320,
+        "wires": [
+            [
+                "c925077cd9494fdf"
+            ]
+        ]
+    },
+    {
+        "id": "dfea4ab10f1b5de4",
+        "type": "rpi-sensehatsim in",
+        "z": "68ebf9db6eb0dc1b",
+        "name": "Environmental Sensors (Temp/Hum)",
+        "motion": false,
+        "env": true,
+        "stick": true,
+        "x": 140,
+        "y": 320,
+        "wires": [
+            [
+                "7aede8794dfe89bd"
+            ]
+        ]
+    },
+    {
+        "id": "c925077cd9494fdf",
+        "type": "delay",
+        "z": "68ebf9db6eb0dc1b",
+        "name": "Traffic Throttler",
+        "pauseType": "rate",
+        "timeout": "300",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "2",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 680,
+        "y": 320,
+        "wires": [
+            [
+                "fb9e99ae90d596fa"
+            ]
+        ]
+    },
+    {
+        "id": "6bb677f9448d32b9",
+        "type": "aws-iot-broker",
+        "broker": "a1ar3o4i1fm38x-ats.iot.eu-north-1.amazonaws.com",
+        "port": 8883,
+        "clientid": "SenseHat_Mac_001",
+        "keepalive": 60,
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "keypath": "/Users/amirz/Desktop/IOTCA/21a7802edf786372e477281ea0adc53d6e94751464b57a691496fcb94ea6146f-private.pem.key",
+        "certpath": "/Users/amirz/Desktop/IOTCA/21a7802edf786372e477281ea0adc53d6e94751464b57a691496fcb94ea6146f-certificate.pem.crt",
+        "capath": "/Users/amirz/Desktop/IOTCA/AmazonRootCA1.pem"
+    },
+    {
+        "id": "57223f3d03c90a10",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-aws-iot": "0.0.1",
+            "node-red-node-pi-sense-hat-simulator": "0.1.0"
+        }
+    }
+]
